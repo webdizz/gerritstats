@@ -7,3 +7,28 @@ subprojects {
         mavenCentral()
     }
 }
+
+task download << {
+  javaexec {
+    main = "-jar"
+    args = [
+    "GerritDownloader/build/libs/GerritDownloader.jar",
+    "-p", gerritProject,
+    "-s", gerritServer,
+    "-l", recordsLimit,
+    "-o", "gerrit-stats.json"
+    ]
+  }
+}
+
+task stats(dependsOn: download) << {
+  javaexec {
+    main = "-jar"
+    args = [
+    "GerritStats/build/libs/GerritStats.jar",
+    "--file", "gerrit-stats.json",
+    "--branches", branches,
+    "--exclude", exclude
+    ]
+  }
+}
